@@ -1,103 +1,24 @@
-import http from "http";
-import https from "https";
-import "dns";
-import { mkdir, writeFile, readFile, access, lstat } from "fs/promises";
-export {
-  access as fs_access,
-  appendFile as fs_appendFile,
-  copyFile as fs_copyFile,
-  lstat as fs_lstat,
-  mkdir as fs_mkdir,
-  readFile as fs_readFile,
-  readdir as fs_readdir,
-  rename as fs_rename,
-  rm as fs_rm,
-  unlink as fs_unlink,
-  writeFile as fs_writeFile,
-} from "fs/promises";
-export {
-  createHash as crypto_createHash,
-  getHashes as crypto_getHashes,
-} from "crypto";
-export { EOL } from "os";
-import { execSync, exec } from "child_process";
-export {
-  exec as child_process_exec,
-  execSync as child_process_execSync,
-  spawn as child_process_spawn,
-  spawnSync as child_process_spawnSync,
-} from "child_process";
-export {
-  appendFileSync as fs_appendFileSync,
-  constants as fs_constants,
-  copyFileSync as fs_copyFileSync,
-  createReadStream as fs_createReadStream,
-  createWriteStream as fs_createWriteStream,
-  readFileSync as fs_readFileSync,
-  writeFileSync as fs_writeFileSync,
-  lstat as fsc_lstat,
-  rename as fsc_rename,
-} from "fs";
-import { URL } from "url";
-export {
-  URL as url_URL,
-  fileURLToPath as url_fileURLToPath,
-  pathToFileURL as url_pathToFileURL,
-} from "url";
-import { stringify } from "querystring";
-export {
-  decode as qs_decode,
-  encode as qs_encode,
-  escape as qs_escape,
-  parse as qs_parse,
-  unescape as qs_unescape,
-} from "querystring";
-import { isAbsolute, sep, dirname, basename, join } from "path";
-export {
-  basename as path_basename,
-  dirname as path_dirname,
-  extname as path_extname,
-  isAbsolute as path_isAbsolute,
-  join as path_join,
-  parse as path_parse,
-  relative as path_relative,
-  resolve as path_resolve,
-  sep as path_sep,
-} from "path";
-import { createConnection, isIPv4, isIPv6 } from "net";
-export { isIPv4, isIPv6 } from "net";
-import "zlib";
-export { pipeline as stream_pipeline } from "stream/promises";
-import {
-  stringIncludesAny,
-  isStringFull,
-  isArrayOfStrings,
-  throwError,
-  ensureInSubstring,
-  isString,
-  isArrayFull,
-  stringIncludesAll,
-  isFloat,
-  getPortFromIP,
-  removePortFromIP,
-  isNumber,
-  promiseWithTimeout,
-  replaceBackslashToForward,
-  isBool,
-  isArray,
-  isObject,
-  splitPathToArray,
-  stringifyCopyObj,
-  isObjectFull,
-  getUniqueElements,
-  arrayHasAny,
-  isStringEqual,
-  ensureLastSubString,
-  removeLastPathSep,
-  getPathDepth,
-  hasLastPathSep,
-  removeFirstPathSep,
-} from "./js-utils.mjs";
+import http from 'http';
+import https from 'https';
+import 'dns';
+import { mkdir, writeFile, readFile, access, lstat } from 'fs/promises';
+export { access as fs_access, appendFile as fs_appendFile, copyFile as fs_copyFile, lstat as fs_lstat, mkdir as fs_mkdir, readFile as fs_readFile, readdir as fs_readdir, rename as fs_rename, rm as fs_rm, unlink as fs_unlink, writeFile as fs_writeFile } from 'fs/promises';
+export { createHash as crypto_createHash, getHashes as crypto_getHashes } from 'crypto';
+export { EOL } from 'os';
+import { execSync, exec } from 'child_process';
+export { exec as child_process_exec, execSync as child_process_execSync, spawn as child_process_spawn, spawnSync as child_process_spawnSync } from 'child_process';
+export { appendFileSync as fs_appendFileSync, constants as fs_constants, copyFileSync as fs_copyFileSync, createReadStream as fs_createReadStream, createWriteStream as fs_createWriteStream, readFileSync as fs_readFileSync, writeFileSync as fs_writeFileSync, lstat as fsc_lstat, rename as fsc_rename } from 'fs';
+import { URL } from 'url';
+export { URL as url_URL, fileURLToPath as url_fileURLToPath, pathToFileURL as url_pathToFileURL } from 'url';
+import { stringify } from 'querystring';
+export { decode as qs_decode, encode as qs_encode, escape as qs_escape, parse as qs_parse, unescape as qs_unescape } from 'querystring';
+import { isAbsolute, sep, dirname, basename, join } from 'path';
+export { basename as path_basename, dirname as path_dirname, extname as path_extname, isAbsolute as path_isAbsolute, join as path_join, parse as path_parse, relative as path_relative, resolve as path_resolve, sep as path_sep } from 'path';
+import { createConnection, isIPv4, isIPv6 } from 'net';
+export { isIPv4, isIPv6 } from 'net';
+import 'zlib';
+export { pipeline as stream_pipeline } from 'stream/promises';
+import { stringIncludesAny, isStringFull, isArrayOfStrings, throwError, ensureInSubstring, isString, isArrayFull, stringIncludesAll, isFloat, getPortFromIP, removePortFromIP, isNumber, promiseWithTimeout, replaceBackslashToForward, isBool, isArray, isObject, splitPathToArray, stringifyCopyObj, isObjectFull, getUniqueElements, arrayHasAny, isStringEqual, ensureLastSubString, removeLastPathSep, getPathDepth, hasLastPathSep, removeFirstPathSep } from './js-utils.mjs';
 
 function execute(cmd, sync) {
   return new Promise((res, rej) => {
@@ -783,26 +704,4 @@ function pathsToTree(paths, key = "path", rootPathToRemove) {
 
 // cU shouldn't have any methods from node cU
 
-export {
-  ensureLastPathSep,
-  ensurePath,
-  execute,
-  getFileBaseName,
-  getSepFromPath,
-  httpRequest,
-  isChildOfParentDir,
-  isCmdOk,
-  isDir,
-  isFileOrDir,
-  isHostAlive,
-  isNetworkPath,
-  isOSWindows,
-  isPathAbsolute,
-  isPathsEqualByOS,
-  isPortListening,
-  pathsToTree,
-  readJsonFile,
-  replacePathSepToOS,
-  replaceStartOfPath,
-  saveAsJson,
-};
+export { ensureLastPathSep, ensurePath, execute, getFileBaseName, getSepFromPath, httpRequest, isChildOfParentDir, isCmdOk, isDir, isFileOrDir, isHostAlive, isNetworkPath, isOSWindows, isPathAbsolute, isPathsEqualByOS, isPortListening, pathsToTree, readJsonFile, replacePathSepToOS, replaceStartOfPath, saveAsJson };

@@ -523,19 +523,19 @@ function sortObjects(arr = [], propertyName, order = "a") {
   if (!isArray(arr)) {
     return arr;
   }
-  order = order.toLowerCase();
+  let ascSort = includesNoCase(["a", "asc"], order);
 
   arr.sort(function (a1, b1) {
     let a1Prop = getNestedProp(a1, propertyName, "");
     let b1Prop = getNestedProp(b1, propertyName, "");
     if (isString(a1Prop) && isString(b1Prop)) {
-      if (order === "a") {
+      if (ascSort) {
         return a1Prop.localeCompare(b1Prop);
       } else {
         return b1Prop.localeCompare(a1Prop);
       }
     }
-    if (order === "a") {
+    if (ascSort) {
       if (a1Prop < b1Prop) {
         return -1;
       }

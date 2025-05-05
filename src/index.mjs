@@ -32,7 +32,7 @@ class TorrentClientApi {
     agent,
     xmlrpc,
     memCacheTimeout = 60,
-    dataDir = "",
+    cacheDir = "",
   }) {
     if (isString(baseUrl)) {
       baseUrl = ensureURLProtocol(baseUrl, "http://");
@@ -46,7 +46,7 @@ class TorrentClientApi {
       !isString(password) ||
       !isNumber(memCacheTimeout) ||
       memCacheTimeout < 1 ||
-      !isPathAbsolute(dataDir)
+      !isPathAbsolute(cacheDir)
     ) {
       throwError([
         "ade85a17-7be2-4791-9175-fcc572ea4429",
@@ -58,7 +58,7 @@ class TorrentClientApi {
         password,
         timeoutS,
         memCacheTimeout,
-        dataDir,
+        cacheDir,
       ]);
     }
     const clientConfig = {
@@ -88,9 +88,9 @@ class TorrentClientApi {
     this.#clientType = clientType;
     this.#memCacheTimeout = memCacheTimeout;
     this.#host = new URL(baseUrl).host;
-    this.#dataDir = dataDir;
+    this.#dataDir = cacheDir;
     this.#tPath = replacePathSepToOS(
-      join(dataDir, sanitizeFilename(this.#host + "-" + clientType, "-"))
+      join(cacheDir, sanitizeFilename(this.#host + "-" + clientType, "-"))
     );
   }
   get clientType() {
