@@ -77,7 +77,7 @@ Bug fix and feature request messages are welcome and appreciated.
 
     const preferences = await qBittorent.getPreferences();
 
-    // This only takes raw preferences data that is returned from getPreferences() method
+    // This only works with data format of raw preferences that are returned from getPreferences() method
     await qBittorent.setPreferences(preferences);
 
     await qBittorent.setTorrentUploadSpeed(hashes, 50); // limit in KBps
