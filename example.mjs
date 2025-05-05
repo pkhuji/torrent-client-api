@@ -26,27 +26,28 @@ console.log(
     sort: torrentFields[0], // sort by any field
     reverse: false,
     //
+    raw: false,
     // if true then data will not be normalized and
     // sort, filter, cache not applied on raw result
-    raw: false,
     //
     currentPage: 1,
     //
     fresh: false,
-    // if true then fresh data from client will be fetched, else cache data will be returned
+    // if true then fresh data from client will be fetched, 
+    // else cache data will be returned
   })
 );
 
 console.log(
   await qBittorent.getTorrentFiles(hash, {
-    // files will be returned as hierarchical tree object instead of array
     asTree: false,
+    // to return files as hierarchical tree object instead of array
     //
-    // data will not be normalized
     raw: false,
+    // for getting raw data
     //
-    // for ignoring cache and getting fresh data
     fresh: false,
+    // for ignoring cache and getting fresh data
   })
 );
 
@@ -61,12 +62,13 @@ await qBittorent.renameFile(hash, "old-path", "new-path");
 
 const preferences = await qBittorent.getPreferences();
 
-// This only takes raw preferences data that is returned from getPreferences() method
 await qBittorent.setPreferences(preferences);
-
+// This only works with data format of raw preferences that are 
+// returned from getPreferences() method
+    
 await qBittorent.setTorrentUploadSpeed(hashes, 50); // limit in KBps
 await qBittorent.startTorrents(hashes);
 await qBittorent.stopTorrents(hashes);
 
-// clear cache save timers so process can exit during testing
 qBittorent.clearTimers();
+// clear cache save timers so process can exit during testing
