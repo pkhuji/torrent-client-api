@@ -1,0 +1,15 @@
+[
+  {
+    "availability": -1,
+    "index": 0,
+    "is_seed": true,
+    "name": "Daredevil/Daredevil.mkv",
+    "piece_range": [
+      0,
+      225
+    ],
+    "priority": 1,
+    "progress": 1,
+    "size": 236247048
+  }
+]
