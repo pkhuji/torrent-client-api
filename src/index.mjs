@@ -23,16 +23,16 @@ class TorrentClientApi {
   #dataDir;
   #hashesForFileSave;
   constructor({
-    clientType = null,
-    baseUrl = "",
-    apiPath = "",
-    username = "",
-    password = "",
+    clientType,
+    baseUrl,
+    apiPath,
+    username,
+    password,
     timeoutS = 5,
     agent,
     xmlrpc,
     memCacheTimeout = 60,
-    cacheDir = "",
+    cacheDir,
   }) {
     if (isString(baseUrl)) {
       baseUrl = ensureURLProtocol(baseUrl, "http://");
@@ -42,8 +42,6 @@ class TorrentClientApi {
       !isNumber(timeoutS) ||
       timeoutS < 1 ||
       !isValidURL(baseUrl) ||
-      !isString(username) ||
-      !isString(password) ||
       !isNumber(memCacheTimeout) ||
       memCacheTimeout < 1 ||
       !isPathAbsolute(cacheDir)
@@ -53,13 +51,16 @@ class TorrentClientApi {
         clientType,
         clientTypes,
         baseUrl,
-        apiPath,
-        username,
-        password,
         timeoutS,
         memCacheTimeout,
         cacheDir,
       ]);
+    }
+    if (!isString(username)) {
+      username = "";
+    }
+    if (!isString(password)) {
+      password = "";
     }
     const clientConfig = {
       agent,

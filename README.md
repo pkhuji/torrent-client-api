@@ -23,11 +23,16 @@ import {
 
 const qBittorent = new TorrentClientApi({
   clientType: torrentClientTypes.qBittorent,
-  baseUrl: "127.0.0.1:10000",
+  baseUrl: "127.0.0.1:10000", // port must be included here
+  apiPath: "", // custom api path after baseUrl
   username: "admin",
   password: "",
+  timeoutS: 5, // request timeout in seconds. default = 5
+  agent: null, // custom agent for use in http request
+  xmlrpc: null, // xmlrpc module. only for rTorrent.
   cacheDir: "C:/test-data/cache",
   memCacheTimeout: 5,
+  // clear memory cache after this many seconds. default = 60
 });
 
 const hash = "A torrent infohash";
