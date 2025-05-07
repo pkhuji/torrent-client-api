@@ -624,7 +624,9 @@ function throwError(errorInfo, ...args) {
         // if (isArray(found.topInfo)) {
         //   newErrorInfo = [...newErrorInfo, ...found.topInfo];
         // }
-        findNestedErrors(found.info);
+        if (isArray(found.info)) {
+          findNestedErrors(found.info);
+        }
       }
     };
     findNestedErrors(errorInfo);
