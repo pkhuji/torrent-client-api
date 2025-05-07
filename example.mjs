@@ -13,7 +13,7 @@ const qBittorent = new TorrentClientApi({
   password: "",
   timeoutS: 5, // request timeout in seconds. default = 5
   agent: null, // custom agent for use in http request
-  xmlrpc: null, // xmlrpc module. only for rTorrent.
+  xmlrpc: null, // xmlrpc module. only needed for rTorrent.
   cacheDir: "C:/test-data/cache",
   memCacheTimeout: 5,
   // clear memory cache after this many seconds. default = 60
