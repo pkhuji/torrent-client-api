@@ -1,7 +1,7 @@
 import http from 'http';
 import https from 'https';
 import 'dns';
-import { mkdir, writeFile, readFile, access, lstat } from 'fs/promises';
+import { mkdir, writeFile, readFile, unlink, access, lstat } from 'fs/promises';
 export { access as fs_access, appendFile as fs_appendFile, copyFile as fs_copyFile, lstat as fs_lstat, mkdir as fs_mkdir, readFile as fs_readFile, readdir as fs_readdir, rename as fs_rename, rm as fs_rm, unlink as fs_unlink, writeFile as fs_writeFile } from 'fs/promises';
 export { createHash as crypto_createHash, getHashes as crypto_getHashes } from 'crypto';
 export { EOL } from 'os';
@@ -18,7 +18,7 @@ import { createConnection, isIPv4, isIPv6 } from 'net';
 export { isIPv4, isIPv6 } from 'net';
 import 'zlib';
 export { pipeline as stream_pipeline } from 'stream/promises';
-import { stringIncludesAny, isStringFull, isArrayOfStrings, throwError, ensureInSubstring, isString, isArrayFull, stringIncludesAll, isFloat, getPortFromIP, removePortFromIP, isNumber, promiseWithTimeout, replaceBackslashToForward, isBool, isArray, isObject, splitPathToArray, stringifyCopyObj, isObjectFull, getUniqueElements, arrayHasAny, isStringEqual, ensureLastSubString, removeLastPathSep, getPathDepth, hasLastPathSep, removeFirstPathSep } from './js-utils.mjs';
+import { stringIncludesAny, isStringFull, isArrayOfStrings, throwError, ensureInSubstring, isString, isArrayFull, stringIncludesAll, isFloat, getPortFromIP, removePortFromIP, isNumber, promiseWithTimeout, replaceBackslashToForward, isBool, isArray, isObject, splitPath, removeLastPathSep, getPathDepth, stringifyCopyObj, isObjectFull, getUniqueElements, arrayHasAny, isStringEqual, ensureLastSubString, hasLastPathSep, removeFirstPathSep } from './js-utils.mjs';
 
 function execute(cmd, sync) {
   return new Promise((res, rej) => {
@@ -122,6 +122,21 @@ function isDir(fullpath, sync) {
   })();
 }
 
+function isFile(fullpath, sync) {
+  let ip = isNetworkPath(fullpath);
+  if (ip) {
+    fullpath = replaceBackslashToForward(fullpath);
+  }
+  return (async () => {
+    if (ip && !(await isHostAlive(ip, { timeout: 500, count: 1 }))) {
+      return false;
+    }
+    return lstat(fullpath)
+      .then((stats) => stats.isFile())
+      .catch(() => false);
+  })();
+}
+
 function ensureLastPathSep(dir) {
   if (!isString(dir)) {
     throwError(["9e61f19b-ea10-45e4-b5d1-65f4ffe66c9d", dir]);
@@ -159,6 +174,21 @@ function replacePathSepToOS(str) {
   return str.replace(/[\\/]/g, sep);
 }
 
+function deleteFileIfExists(filepath, sync) {
+  let exists = false;
+  return (async () => {
+    try {
+      exists = await isFile(filepath);
+      if (exists) {
+        await unlink(filepath);
+      }
+    } catch (e) {
+      return false;
+    }
+    return true;
+  })();
+}
+
 function replaceStartOfPath(
   replaceFrom,
   toReplace,
@@ -180,7 +210,7 @@ function replaceStartOfPath(
     ]);
   }
 
-  if (!isArrayFull(splitPathToArray(replaceFrom))) {
+  if (!isArrayFull(splitPath(replaceFrom))) {
     return replaceFrom;
   }
 
@@ -192,7 +222,7 @@ function replaceStartOfPath(
   if (!replaceFrom || !toReplace) {
     return replaceFrom;
   }
-  let pathArr = splitPathToArray(toReplace);
+  let pathArr = splitPath(toReplace);
   if (!isArrayFull(pathArr)) {
     return replaceFrom;
   }
@@ -642,7 +672,7 @@ function isNetworkPath(fullPath) {
     // console.log("if (!isPathAbsolute(fullPath)) {");
     return false;
   }
-  let ip = splitPathToArray(fullPath)[0];
+  let ip = splitPath(fullPath)[0];
   // console.log(ip);
   if (!(isIPv4(ip) || isIPv6(ip))) {
     return false;
@@ -667,7 +697,7 @@ function pathsToTree(paths, key = "path", rootPathToRemove) {
       }
       path = path[key];
     }
-    splitPathToArray(path).reduce((r, fNameS) => {
+    splitPath(path).reduce((r, fNameS) => {
       if (!r[fNameS]) {
         r[fNameS] = { result: [] };
         r.result.push({
@@ -704,4 +734,4 @@ function pathsToTree(paths, key = "path", rootPathToRemove) {
 
 // cU shouldn't have any methods from node cU
 
-export { ensureLastPathSep, ensurePath, execute, getFileBaseName, getSepFromPath, httpRequest, isChildOfParentDir, isCmdOk, isDir, isFileOrDir, isHostAlive, isNetworkPath, isOSWindows, isPathAbsolute, isPathsEqualByOS, isPortListening, pathsToTree, readJsonFile, replacePathSepToOS, replaceStartOfPath, saveAsJson };
+export { deleteFileIfExists, ensureLastPathSep, ensurePath, execute, getFileBaseName, getSepFromPath, httpRequest, isChildOfParentDir, isCmdOk, isDir, isFile, isFileOrDir, isHostAlive, isNetworkPath, isOSWindows, isPathAbsolute, isPathsEqualByOS, isPortListening, pathsToTree, readJsonFile, replacePathSepToOS, replaceStartOfPath, saveAsJson };

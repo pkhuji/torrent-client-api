@@ -3,10 +3,10 @@ import { Deluge } from './clients/deluge.mjs';
 import { RTorrent } from './clients/rtorrent.mjs';
 import { Transmission } from './clients/transmission.mjs';
 import { UTorrent } from './clients/utorrent.mjs';
-import { isString, ensureURLProtocol, isNumber, isValidURL, throwError, sanitizeFilename, objectsToArrays, getNestedProps, isArray, arraysToObjects, getUnixTimestampInS, isArrayFull, isStringFullTrimmed, includesNoCase, stringIncludesAll, sortObjects, removeFromStart, isStringFull, removeLastPathSep, removeFirstPathSep, getPathDepth } from './common-utils/js-utils.mjs';
+import { isString, ensureURLProtocol, isNumber, isValidURL, throwError, sanitizeFilename, objectsToArrays, getNestedProps, isArray, arraysToObjects, getUnixTimestampInS, isArrayFull, isStringFullTrimmed, includesNoCase, stringIncludesAll, sortObjects, removeFromStart, isStringFull, removeLastPathSep, removeFirstPathSep, getPathDepth, splitPath, sleepMsPromise } from './common-utils/js-utils.mjs';
 import { clientTypes, filters, allStatus, tFields, hashesToArray, tfFields } from './helpers.mjs';
 export { matchPreferences as matchClientPreferences } from './helpers.mjs';
-import { isPathAbsolute, replacePathSepToOS, ensurePath, saveAsJson, readJsonFile, pathsToTree } from './common-utils/node-utils.mjs';
+import { isPathAbsolute, replacePathSepToOS, ensurePath, saveAsJson, readJsonFile, deleteFileIfExists, pathsToTree, isChildOfParentDir, isPathsEqualByOS } from './common-utils/node-utils.mjs';
 import { URL } from 'url';
 import { join } from 'path';
 
@@ -188,6 +188,7 @@ class TorrentClientApi {
           await this.#client.getTorrents()
         );
         this.#saveToDisk = true;
+        await deleteFileIfExists(this.#tPath);
       } catch {}
       if (torrents) {
         this.#memCache = { torrents, timestampS: getUnixTimestampInS() };
@@ -340,21 +341,32 @@ class TorrentClientApi {
       }
       let { files } = this.#tFiles[h];
       files = objectsToArrays(files, tfFields);
-      let filePath = join(this.#dataDir, h + "-" + this.#clientType);
       try {
-        await saveAsJson({ ...this.#tFiles[h], files }, filePath, false, true);
+        await saveAsJson(
+          { ...this.#tFiles[h], files },
+          this.#getFilesCachePath(h),
+          false,
+          true
+        );
       } catch {}
     }
     this.#hashesForFileSave = null;
+  }
+  #getFilesCachePath(hash) {
+    return join(this.#dataDir, hash + "-" + this.#clientType);
+  }
+  async #deleteFilesCache(hash) {
+    try {
+      await deleteFileIfExists(this.#getFilesCachePath(hash));
+    } catch {}
   }
   async #restoreTorrentFiles(hash) {
     if (this.#tFiles[hash]) {
       return;
     }
-    let filePath = join(this.#dataDir, hash + "-" + this.#clientType);
     let fileData;
     try {
-      fileData = await readJsonFile(filePath);
+      fileData = await readJsonFile(this.#getFilesCachePath(hash));
     } catch {
       return;
     }
@@ -392,6 +404,7 @@ class TorrentClientApi {
           await this.#client.getTorrentFiles(hash)
         );
         (this.#hashesForFileSave = this.#hashesForFileSave || []).push(hash);
+        await this.#deleteFilesCache(hash);
       } catch {}
       if (files) {
         data = { timestampS: getUnixTimestampInS(), files, hash };
@@ -446,7 +459,7 @@ class TorrentClientApi {
     }
     return this.#client.setTorrentUploadSpeed(hashes, limitKbps);
   }
-  renameFile(hash, oldPath, newPath) {
+  async renameFile(hash, oldPath, newPath) {
     if (
       !isStringFull(hash) ||
       !isStringFull(oldPath) ||
@@ -459,7 +472,36 @@ class TorrentClientApi {
     if (getPathDepth(oldPath) !== getPathDepth(newPath)) {
       return false;
     }
-    return this.#client.renameFile(hash, oldPath, newPath);
+    let differCount = 0;
+    let oldP = splitPath(oldPath);
+    let newP = splitPath(newPath);
+    let i = 0;
+    for (let s of oldP) {
+      if (s !== newP[i]) {
+        differCount++;
+      }
+      i++;
+    }
+    if (differCount > 1) {
+      return false;
+    }
+    let { files } = await this.getTorrentFiles(hash, { fresh: true });
+    let found = files.find(
+      (s) =>
+        isChildOfParentDir({
+          parentPath: oldPath,
+          childPath: s.path,
+          isAbsolute: false,
+        }) || isPathsEqualByOS(s.path, oldPath, true, false)
+    );
+    if (!found) {
+      return false;
+    }
+    let IS_FILE = isPathsEqualByOS(found.path, oldPath, true, false);
+
+    await this.#client.renameFile(hash, oldPath, newPath, IS_FILE);
+    await sleepMsPromise(500);
+    return await this.getTorrentFiles(hash, { fresh: true });
   }
 }
 

@@ -1,5 +1,5 @@
 import { isString, ensureURLProtocol, isNumber, isValidURL, throwError, isStringFull, joinURLPaths, parseCookie, versionCompare, json_stringify, includesNoCase } from '../common-utils/js-utils.mjs';
-import { httpRequest, isChildOfParentDir, isPathsEqualByOS } from '../common-utils/node-utils.mjs';
+import { httpRequest } from '../common-utils/node-utils.mjs';
 import { hashesToString, setLoginCounter, allStatus, formatRatio } from '../helpers.mjs';
 
 class QBittorent {
@@ -183,20 +183,7 @@ class QBittorent {
     });
     return true;
   }
-  async renameFile(hash, oldPath, newPath) {
-    let files = await this.getTorrentFiles(hash);
-    let found = files.find(
-      (s) =>
-        isChildOfParentDir({
-          parentPath: oldPath,
-          childPath: s.name,
-          isAbsolute: false,
-        }) || isPathsEqualByOS(s.name, oldPath, true, false)
-    );
-    if (!found) {
-      return false;
-    }
-    let IS_FILE = isPathsEqualByOS(found.name, oldPath, true, false);
+  async renameFile(hash, oldPath, newPath, IS_FILE) {
     let route = IS_FILE ? "renameFile" : "renameFolder";
     await this.request("/torrents/" + route, "POST", undefined, {
       hash,

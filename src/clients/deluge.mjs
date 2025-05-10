@@ -1,5 +1,5 @@
 import { isString, ensureURLProtocol, isNumber, isValidURL, throwError, isStringFull, joinURLPaths, getNestedProp, versionCompare, changePropsToCamel, getNestedProps, stringIncludesNoCase, includesNoCase, replaceBackslashToForward, isArray } from '../common-utils/js-utils.mjs';
-import { httpRequest, isChildOfParentDir, isPathsEqualByOS } from '../common-utils/node-utils.mjs';
+import { httpRequest } from '../common-utils/node-utils.mjs';
 import { hashesToArray, setLoginCounter, allStatus, formatRatio } from '../helpers.mjs';
 import { join } from 'path';
 
@@ -211,23 +211,10 @@ class Deluge {
     ]);
     return true;
   }
-  async renameFile(hash, oldPath, newPath) {
-    let files = await this.getTorrentFiles(hash);
-    let found = files.find(
-      (s) =>
-        isChildOfParentDir({
-          parentPath: oldPath,
-          childPath: s.path,
-          isAbsolute: false,
-        }) || isPathsEqualByOS(s.path, oldPath, true, false)
-    );
-    if (!found) {
-      return false;
-    }
-    let isFile = isPathsEqualByOS(found.path, oldPath, true, false);
+  async renameFile(hash, oldPath, newPath, IS_FILE) {
     let method = "core.rename_folder";
     let args = [hash, oldPath, newPath];
-    if (isFile) {
+    if (IS_FILE) {
       method = "core.rename_files";
       args = [hash, [[found.index, newPath]]];
     }

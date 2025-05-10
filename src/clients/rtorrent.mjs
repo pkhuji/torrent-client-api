@@ -136,7 +136,7 @@ class RTorrent {
     return true;
   }
   async renameFile(hash, oldPath, newPath) {
-    return true;
+    return;
   }
   normalizeStatus(status, isFinished, error) {}
   normalizeTorrents(torrents) {

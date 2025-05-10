@@ -1,5 +1,5 @@
 import { isString, ensureURLProtocol, isNumber, isValidURL, throwError, isStringFull, joinURLPaths, isObject, changePropsToCamel, versionCompare, getNestedProp, isArrayFull, replaceBackslashToForward, concatArrays } from '../common-utils/js-utils.mjs';
-import { isChildOfParentDir, isPathsEqualByOS, getFileBaseName, httpRequest } from '../common-utils/node-utils.mjs';
+import { getFileBaseName, httpRequest } from '../common-utils/node-utils.mjs';
 import { hashesToArray, setLoginCounter, allStatus, formatRatio } from '../helpers.mjs';
 import { join } from 'path';
 
@@ -153,18 +153,6 @@ class Transmission {
     return true;
   }
   async renameFile(hash, oldPath, newPath) {
-    let files = await this.getTorrentFiles(hash);
-    let found = files.find(
-      (s) =>
-        isChildOfParentDir({
-          parentPath: oldPath,
-          childPath: s.name,
-          isAbsolute: false,
-        }) || isPathsEqualByOS(s.name, oldPath, true, false)
-    );
-    if (!found) {
-      return false;
-    }
     await this.request("torrent-rename-path", {
       ids: hashesToArray(hash),
       path: oldPath,

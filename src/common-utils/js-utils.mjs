@@ -194,6 +194,12 @@ function replaceBackslashToForward(str) {
   return str.replace(/[\\]/g, "/");
 }
 
+function sleepMsPromise(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+}
+
 function indexOfNoCase(arr, val) {
   return arr.findIndex((item) => {
     if (isString(val) && isString(item)) {
@@ -322,7 +328,7 @@ function isDeepEqualObj(
   return true;
 }
 
-function splitPathToArray(path) {
+function splitPath(path) {
   if (!isString(path)) {
     throwError(["6f7a6ccb-7214-4175-85cf-fbdbcefd1caa", path]);
   }
@@ -841,7 +847,7 @@ function ensureURLProtocol(url, fullProtocol) {
 }
 
 function getPathDepth(fullPath) {
-  return splitPathToArray(fullPath).length;
+  return splitPath(fullPath).length;
 }
 
 function versionCompare(a, b) {
@@ -906,4 +912,4 @@ function arraysToObjects(arr, keys) {
   });
 }
 
-export { arrayHasAny, arraysToObjects, caseSnakeToCamel, changePropsToCamel, combineArrayChunks, concatArrays, ensureFirstSubString, ensureInSubstring, ensureLastSubString, ensureURLProtocol, getDuplicates, getNestedProp, getNestedProps, getPathDepth, getPortFromIP, getUniqueElements, getUnixTimestampInS, hasDuplicates, hasLastPathSep, hasNestedProp, hasOwnProp, includesNoCase, indexOfNoCase, isArray, isArrayFull, isArrayOfStrings, isArrayOfStringsOrFloats, isBool, isDeepEqualObj, isError, isFloat, isFunction, isGUID, isNumber, isObject, isObjectFull, isString, isStringEqual, isStringFull, isStringFullTrimmed, isStringOrFloat, isValidURL, joinURLPaths, json_stringify, objectsToArrays, parseCookie, promiseWithTimeout, removeFirstPathSep, removeFromEnd, removeFromStart, removeFromStartIfExists, removeLastPathSep, removePortFromIP, replaceBackslashToForward, sanitizeFilename, setNestedProp, sortObjects, sortStringsByLength, splitArrayIntoChunks, splitPathToArray, startsWithAny, startsWithNoCase, stringIncludesAll, stringIncludesAny, stringIncludesNoCase, stringIndexOfNoCase, stringifyCopyObj, throwError, versionCompare };
+export { arrayHasAny, arraysToObjects, caseSnakeToCamel, changePropsToCamel, combineArrayChunks, concatArrays, ensureFirstSubString, ensureInSubstring, ensureLastSubString, ensureURLProtocol, getDuplicates, getNestedProp, getNestedProps, getPathDepth, getPortFromIP, getUniqueElements, getUnixTimestampInS, hasDuplicates, hasLastPathSep, hasNestedProp, hasOwnProp, includesNoCase, indexOfNoCase, isArray, isArrayFull, isArrayOfStrings, isArrayOfStringsOrFloats, isBool, isDeepEqualObj, isError, isFloat, isFunction, isGUID, isNumber, isObject, isObjectFull, isString, isStringEqual, isStringFull, isStringFullTrimmed, isStringOrFloat, isValidURL, joinURLPaths, json_stringify, objectsToArrays, parseCookie, promiseWithTimeout, removeFirstPathSep, removeFromEnd, removeFromStart, removeFromStartIfExists, removeLastPathSep, removePortFromIP, replaceBackslashToForward, sanitizeFilename, setNestedProp, sleepMsPromise, sortObjects, sortStringsByLength, splitArrayIntoChunks, splitPath, startsWithAny, startsWithNoCase, stringIncludesAll, stringIncludesAny, stringIncludesNoCase, stringIndexOfNoCase, stringifyCopyObj, throwError, versionCompare };
